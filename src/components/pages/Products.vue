@@ -1,7 +1,7 @@
 <template lang="">
     <div>
         <div class="text-start mt-4">
-            <button class="btn btn-primary" @click="openModal">Create New
+            <button class="btn btn-primary" @click="openModal(true)">Create New
                 Product</button>
             <a href="#" @click.prevent="signout">Log out</a>
 
@@ -31,7 +31,8 @@
                         <span v-else>False</span>
                     </td>
 
-                    <td><button class="btn btn-outline-primary btn-sm">Modify</button></td>
+                    <td><button class="btn btn-outline-primary btn-sm" @click="openModal(false,item)">Modify</button>
+                    </td>
 
                 </tr>
             </tbody>
@@ -172,9 +173,14 @@
 
             },
             updateProduct() {
-                const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product`;
+                let api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product`;
+                let httpMethod = 'post'
                 const vm = this;
-                this.$http.post(api, { data: vm.tempProduct }).then((response) => {
+                if (!vm.isNew) {
+                    api = `${process.env.VUE_APP_APIPATH} /api/${process.env.VUE_APP_CUSTOMPATH} /admin/product/${vm.tempProduct.id}`
+                    httpMethod = 'put'
+                }
+                this.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
                     console.log(response.data);
                     // vm.products = response.data.products;
                     if (response.data.success) {
