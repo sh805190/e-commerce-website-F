@@ -5,14 +5,21 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service serve --mode test"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "bootstrap": "^5.0.1",
     "core-js": "^3.6.5",
+    "jquery": "^3.6.0",
     "vue": "^2.6.11",
+    "vue-axios": "^3.2.4",
+    "vue-loading-overlay": "^2.1.0",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {
+    "@popperjs/core": "^2.9.2",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
