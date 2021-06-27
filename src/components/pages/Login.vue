@@ -41,14 +41,12 @@
         const api = `${process.env.VUE_APP_APIPATH}/admin/signin`;
         const vm = this;
         this.$http
-          .post(api, vm.user, {
-            Headers: {
-              Authorization: "{token}",
-            },
-          })
+          .post(api, vm.user)
           .then((response) => {
             console.log(response.data);
             if (response.data.success) {
+              const { token, expired } = response.data;
+              document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
               vm.$router.push("/admin/products");
             }
           });

@@ -62,7 +62,8 @@
                                     <label for="customFile">Or Upload Image:
                                         <i class="fas fa-spinner fa-spin"></i>
                                     </label>
-                                    <input type="file" id="customFile" class="form-control" ref="files">
+                                    <input type="file" id="customFile" class="form-control" ref="files"
+                                        @change="upload">
                                 </div>
                                 <img img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
                                     class="img-fluid" :src="tempProduct.imageUrl" alt="">
@@ -177,7 +178,7 @@
                 let httpMethod = 'post'
                 const vm = this;
                 if (!vm.isNew) {
-                    api = `${process.env.VUE_APP_APIPATH} /api/${process.env.VUE_APP_CUSTOMPATH} /admin/product/${vm.tempProduct.id}`
+                    api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/product/${vm.tempProduct.id}`
                     httpMethod = 'put'
                 }
                 this.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
@@ -185,11 +186,15 @@
                     // vm.products = response.data.products;
                     if (response.data.success) {
                         this.modal.hide()
-                        vm.getProducts
+                        vm.getProducts;
+                        window.location.reload();
+
                     } else {
                         this.modal.hide()
-                        vm.getProducts
+                        vm.getProducts;
                         console.log("Cannot Update Product");
+                        window.location.reload();
+
                     }
                 });
             },
@@ -204,12 +209,45 @@
                 });
 
             },
+            upload() {
+                console.log(this);
+                const uploadedFile = this.$refs.files.files[0];
+                var formData = new FormData();
+                formData.append('file-to-upload', uploadedFile)
+                const vm = this;
+                const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/upload`;
+
+                this.$http.post(url, formData, {
+                    header: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }).then((response) => {
+                    console.log(response.data);
+                    if (response.data.success) {
+                        // vm.tempProduct.imageUrl = response.data.imageUrl;
+                        // console.log(vm.tempProduct)
+                        vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl)
+
+                    }
+                })
+            }
         },
         mounted() {
             this.modal = new Modal(document.getElementById('productModal'))
         },
         created() {
             this.getProducts();
+            const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+            console.log(token);
+            this.$http.defaults.headers.common.Authorization = token;
+            const api = `${process.env.VUE_APP_APIPATH}/api/user/check`;
+            this.$http.post(api, this.user).then((res) => {
+                if (!res.data.success) {
+                    this.$router.push('login');
+                }
+            });
+
+
         },
 
     }
